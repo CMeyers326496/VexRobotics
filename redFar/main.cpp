@@ -292,9 +292,12 @@ void atn_drive(double distance, int speed = 50){
     }
 }
 
-void atn_turn(double degrees){
+double atn_turn(double degrees){
     double arc_length = degrees / 360.0 * 2 * M_PI * g_robot_radius;
     int dest_ticks = int((arc_length *360)/(2*M_PI*2.04173228));
+	
+	//Return delta degrees
+	return abs(gyro_turn.value(vex::rotationUnits::deg) - init_gyro);
     
     drive_LFT.startRotateFor(-dest_ticks,vex::rotationUnits::deg,20,vex::velocityUnits::pct);
     drive_RT.startRotateFor(dest_ticks,vex::rotationUnits::deg,20,vex::velocityUnits::pct);
@@ -310,6 +313,9 @@ void atn_turn(double degrees){
     drive_LFT.stop(vex::brakeType::hold);
     drive_RTBCK.stop(vex::brakeType::hold);
     drive_RT.stop(vex::brakeType::hold);
+	
+	//Return delta degrees
+	return abs(gyro_turn.value(vex::rotationUnits::deg) - init_gyro);
 }
 
 void atn_KOBE(){
