@@ -443,13 +443,6 @@ void usercontrol( void ) {
 	usr_change_orientation();
 	usr_activate_intake();
     usr_shoot();
-	
-	//Run Auto if all 4 Arrow btns are pressed
-	if(vexRT.ButtonUp.pressing() && vexRT.ButtonDown.pressing()
-        && vexRT.ButtonLeft.pressing() && vexRT.ButtonRight.pressing()) {
-        autonomous();
-    }   
-	
     vex::this_thread::sleep_for(20);
     
     //Sleep the task for a short amount of time to prevent wasted resources. 
