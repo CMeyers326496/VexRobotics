@@ -325,7 +325,7 @@ double atn_intake(int timeout_deg){
     set_right_drive_speed(20);
     set_left_drive_speed(20);
     
-    while(intake_empty.value() && abs(drive_RT.rotation(vex::rotationUnits::deg)) < timeout_deg){
+    while(lmt_intake.value() && abs(drive_RT.rotation(vex::rotationUnits::deg)) < timeout_deg){
         //Wait for ball to enter robot
     }
     
@@ -443,6 +443,13 @@ void usercontrol( void ) {
 	usr_change_orientation();
 	usr_activate_intake();
     usr_shoot();
+	
+	//Run Auto if all 4 Arrow btns are pressed
+	if(vexRT.ButtonUp.pressing() && vexRT.ButtonDown.pressing()
+        && vexRT.ButtonLeft.pressing() && vexRT.ButtonRight.pressing()) {
+        autonomous();
+    }   
+	
     vex::this_thread::sleep_for(20);
     
     //Sleep the task for a short amount of time to prevent wasted resources. 

@@ -370,7 +370,7 @@ double atn_intake(){
     set_right_drive_speed(20);
     set_left_drive_speed(20);
     
-    while(intake_empty.value()){
+    while(lmt_intake.value()){
         //Wait for ball to enter robot
     }
     
@@ -462,7 +462,13 @@ void usercontrol( void ) {
 	usr_activate_intake();
     usr_shoot();
     usr_flipper();
-   
+	
+	//Run Auto if all 4 Arrow btns are pressed
+	if(vexRT.ButtonUp.pressing() && vexRT.ButtonDown.pressing()
+        && vexRT.ButtonLeft.pressing() && vexRT.ButtonRight.pressing()) {
+        autonomous();
+    }   
+
     vex::this_thread::sleep_for(20);
 
     
