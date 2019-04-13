@@ -1,3 +1,4 @@
+
 vex::brain Brain;
 vex::motor drive_RT (vex::PORT11, vex::gearSetting::ratio18_1,true);
 vex::motor drive_RTBCK (vex::PORT1, vex::gearSetting::ratio18_1,true);
@@ -13,7 +14,6 @@ vex::motor flipper_motor2 (vex::PORT4, vex::gearSetting::ratio18_1,false);
 
 
 
-vex::digital_in lmt_intake (Brain.ThreeWirePort.A);
-vex::digital_in sonar_ball (Brain.ThreeWirePort.E);
-vex::digital_in gyro_turn  (Brain.ThreeWirePort.H);
+vex::digital_in intake_empty (Brain.ThreeWirePort.A);
+vex::digital_in shooter_empty (Brain.ThreeWirePort.B);
 vex::controller vexRT;
