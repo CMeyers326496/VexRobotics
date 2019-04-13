@@ -325,7 +325,7 @@ double atn_intake(int timeout_deg){
     set_right_drive_speed(20);
     set_left_drive_speed(20);
     
-    while(intake_empty.value() && abs(drive_RT.rotation(vex::rotationUnits::deg)) < timeout_deg){
+    while(lmt_intake.value() && abs(drive_RT.rotation(vex::rotationUnits::deg)) < timeout_deg){
         //Wait for ball to enter robot
     }
     
