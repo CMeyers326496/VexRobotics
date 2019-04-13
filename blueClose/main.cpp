@@ -265,8 +265,27 @@ void usr_lockwheels(){//DRAW BACK AT FULL SPEED
     }
 }
 
-
-
+void usr_flipper(){ 
+    if(vexRT.ButtonX.pressing() && flipper_motor.rotation(vex::rotationUnits::deg) < 80)
+    {
+        flipper_motor.spin(vex::directionType::fwd, 20, vex::velocityUnits::pct);
+        flipper_motor2.spin(vex::directionType::fwd, 20, vex::velocityUnits::pct);
+    }
+    else
+    {
+        if(flipper_motor.rotation(vex::rotationUnits::deg) > 40)
+        {
+            flipper_motor.spin(vex::directionType::rev, 8, vex::velocityUnits::pct);
+            flipper_motor2.spin(vex::directionType::rev, 8, vex::velocityUnits::pct);
+        }
+        else
+        {
+            int flipper_motor_vel = flipper_motor.rotation(vex::rotationUnits::deg) * 0.2;
+            flipper_motor.spin(vex::directionType::rev, flipper_motor_vel, vex::velocityUnits::pct);
+            flipper_motor2.spin(vex::directionType::rev, flipper_motor_vel, vex::velocityUnits::pct);
+        }
+    }
+}
 
 
 /*-----------------------------
@@ -442,12 +461,14 @@ void usercontrol( void ) {
 	usr_change_orientation();
 	usr_activate_intake();
     usr_shoot();
+    usr_flipper();
 	
 	//Run Auto if all 4 Arrow btns are pressed
 	if(vexRT.ButtonUp.pressing() && vexRT.ButtonDown.pressing()
         && vexRT.ButtonLeft.pressing() && vexRT.ButtonRight.pressing()) {
         autonomous();
     }   
+
     vex::this_thread::sleep_for(20);
 
     
