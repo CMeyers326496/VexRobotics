@@ -6,7 +6,8 @@ vex::motor drive_LFT (vex::PORT20, vex::gearSetting::ratio18_1,false);
 vex::motor drive_LFTBCK (vex::PORT10, vex::gearSetting::ratio18_1,false);
 vex::motor shooter_motor (vex::PORT6, vex::gearSetting::ratio18_1,false);
 vex::motor shooter_motor2 (vex::PORT5, vex::gearSetting::ratio18_1,false);
-
+vex::motor flipper_motor (vex::PORT3, vex::gearSetting::ratio18_1,true);
+vex::motor flipper_motor2 (vex::PORT4, vex::gearSetting::ratio18_1,false);
 
 
 
