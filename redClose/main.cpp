@@ -352,7 +352,7 @@ double atn_intake(){
     set_right_drive_speed(20);
     set_left_drive_speed(20);
     
-    while(intake_empty.value()){
+    while(lmt_intake.value()){
         //Wait for ball to enter robot
     }
     
