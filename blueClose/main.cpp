@@ -354,24 +354,61 @@ void atn_KOBE(){
     }
 }
 
-void atn_activate_intake(){
-    set_motor_intake(-60);
+int ball_detect()
+{
+    double dist_val = 0, dist_total = 0, dist_avg = 0;
+    int valid_count = 0, error_count = 0;
+    while (valid_count < 50 && error_count < 100)
+    {
+        dist_val = shooter_empty.distance(vex::distanceUnits::mm);
+        if(dist_val > .1 && dist_val < 200)
+        {
+            dist_total += dist_val;
+            valid_count++;
+        }
+        else
+        {
+            error_count++;
+        }
+    }
+    dist_avg = dist_total / 50;
+    if(error_count == 100)
+    {
+        return -1;
+    }
+    else if(dist_avg < 80)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
-void atn_deactivate_intake(){
-    set_motor_intake(0);
+
+void atn_run_intake()
+{
+    intake_motor.spin(vex::directionType::rev, 60, vex::velocityUnits::pct);
+    double start_time = Brain.timer(vex::timeUnits::msec);
+    double current_time = start_time;
+    while((ball_detect() == 0 || ball_detect() == -1) && (current_time-start_time) < 4000)
+    {
+        current_time = Brain.timer(vex::timeUnits::msec);
+    }
+    vex::this_thread::sleep_for(1000); //allow ball to settle
+    intake_motor.spin(vex::directionType::rev, 0, vex::velocityUnits::pct);
 }
 
 //RETURNS - int dist_traveled: the distance in inches that the robot moved to complete the action
-double atn_intake(){
+double atn_intake(double timeout_deg){
     //Record Starting Encoder Tick
-    drive_RT.resetRotation();
+    drive_RT.setRotation(0,vex::rotationUnits::deg);
     
     set_motor_intake(-60);
     set_right_drive_speed(20);
-    set_left_drive_speed(20);
-    
-    while(lmt_intake.value()){
-        //Wait for ball to enter robot
+    set_left_drive_speed(20); 
+    while(intake_empty.value() && drive_RT.rotation(vex::rotationUnits::deg) < timeout_deg){
+        vex::this_thread::sleep_for(1); //Keep this or stuff breaks
     }
     
     int deg_traveled = abs(drive_RT.rotation(vex::rotationUnits::deg));
@@ -379,12 +416,8 @@ double atn_intake(){
     
     set_right_drive_speed(0);
     set_left_drive_speed(0);
-    
-    while(shooter_empty.value()) {
-        //Wait for ball to be loaded into shooter
-    }
-    
-    set_motor_intake(0);
+
+    atn_run_intake();
     
     return dist_traveled;
 }
@@ -426,16 +459,17 @@ void autonomous( void ) {
   atn_KOBE();
   atn_drive(-12);//bck up  to center align
   atn_turn(90);
-  atn_activate_intake();
-  atn_drive(45, 50);
-  vex::this_thread::sleep_for(1000);
-  atn_deactivate_intake();
+  atn_drive(32, 50);
+  double dist_traveled = atn_intake(360);
+  /*At this point our auton is going to change since our alignment with the flag
+  will now be different since we are not driving the same distance forward every
+  single time, because the robot stops once it gets the ball
   atn_turn(-87);
  
   atn_drive(20);
   atn_KOBE();
-
-    atn_drive(35);
+  
+  atn_drive(35);*/
 
 }
 
@@ -495,16 +529,3 @@ int main() {
     }    
        
 }
-
-
-
-
-        
-                            
-     
-                
-
-
-
-
-

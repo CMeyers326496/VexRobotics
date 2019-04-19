@@ -357,7 +357,7 @@ void atn_run_intake()
     {
         current_time = Brain.timer(vex::timeUnits::msec);
     }
-    vex::this_thread::sleep_for(250); //allow ball to settle
+    vex::this_thread::sleep_for(1000); //allow ball to settle
     intake_motor.spin(vex::directionType::rev, 0, vex::velocityUnits::pct);
 }
 
