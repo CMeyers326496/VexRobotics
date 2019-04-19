@@ -361,33 +361,6 @@ void atn_deactivate_intake(){
     set_motor_intake(0);
 }
 
-//RETURNS - int dist_traveled: the distance in inches that the robot moved to complete the action
-double atn_intake(){
-    //Record Starting Encoder Tick
-    drive_RT.resetRotation();
-    
-    set_motor_intake(-60);
-    set_right_drive_speed(20);
-    set_left_drive_speed(20);
-    
-    while(lmt_intake.value()){
-        //Wait for ball to enter robot
-    }
-    
-    int deg_traveled = abs(drive_RT.rotation(vex::rotationUnits::deg));
-    double dist_traveled = deg_traveled * 2 * M_PI * g_wheel_radius / 360;
-    
-    set_right_drive_speed(0);
-    set_left_drive_speed(0);
-    
-    while(shooter_empty.value()) {
-        //Wait for ball to be loaded into shooter
-    }
-    
-    set_motor_intake(0);
-    
-    return dist_traveled;
-}
 
 void atn_mount() {
     atn_drive(-25, 127);
