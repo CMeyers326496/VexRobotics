@@ -316,17 +316,61 @@ void atn_KOBE(){
     }
 }
 
+int ball_detect()
+{
+    double dist_val = 0, dist_total = 0, dist_avg = 0;
+    int valid_count = 0, error_count = 0;
+    while (valid_count < 50 && error_count < 100)
+    {
+        dist_val = shooter_empty.distance(vex::distanceUnits::mm );
+        if(dist_val > .1 && dist_val < 200)
+        {
+            dist_total += dist_val;
+            valid_count++;
+        }
+        else
+        {
+            error_count++;
+        }
+    }
+    dist_avg = dist_total / 50;
+    if(error_count == 100)
+    {
+        return -1;
+    }
+    else if(dist_avg < 60)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+void atn_run_intake()
+{
+    intake_motor.spin(vex::directionType::rev, 60, vex::velocityUnits::pct);
+    double start_time = Brain.timer(vex::timeUnits::msec);
+    double current_time = start_time;
+    while((ball_detect() == 0 || ball_detect() == -1) && (current_time-start_time) < 4000)
+    {
+        current_time = Brain.timer(vex::timeUnits::msec);
+    }
+    vex::this_thread::sleep_for(250); //allow ball to settle
+    intake_motor.spin(vex::directionType::rev, 0, vex::velocityUnits::pct);
+}
+
 //RETURNS - int dist_traveled: the distance in inches that the robot moved to complete the action
-double atn_intake(int timeout_deg){
+double atn_intake(double timeout_deg){
     //Record Starting Encoder Tick
-    drive_RT.resetRotation();
+    drive_RT.setRotation(0,vex::rotationUnits::deg);
     
     set_motor_intake(-60);
     set_right_drive_speed(20);
-    set_left_drive_speed(20);
-    
-    while(lmt_intake.value() && abs(drive_RT.rotation(vex::rotationUnits::deg)) < timeout_deg){
-        //Wait for ball to enter robot
+    set_left_drive_speed(20); 
+    while(intake_empty.value() && drive_RT.rotation(vex::rotationUnits::deg) < timeout_deg){
+        vex::this_thread::sleep_for(1); //Keep this or stuff breaks
     }
     
     int deg_traveled = abs(drive_RT.rotation(vex::rotationUnits::deg));
@@ -334,11 +378,8 @@ double atn_intake(int timeout_deg){
     
     set_right_drive_speed(0);
     set_left_drive_speed(0);
-    
-    //Wait for 8 Seconds to allow ball to settle
-    vex::this_thread::sleep_for(4000);
-    
-    set_motor_intake(0);
+
+    atn_run_intake();
     
     return dist_traveled;
 }
@@ -400,11 +441,9 @@ void autonomous( void ) {
   atn_drive(4, 10);
   
   //make sure ball is in shooter
-  set_motor_intake(-60);
-  vex::this_thread::sleep_for(4000);
+  atn_run_intake();
     
   atn_KOBE();   
-  set_motor_intake(0);
     
   atn_drive(-4, 20);
     
@@ -443,13 +482,6 @@ void usercontrol( void ) {
 	usr_change_orientation();
 	usr_activate_intake();
     usr_shoot();
-	
-	//Run Auto if all 4 Arrow btns are pressed
-	if(vexRT.ButtonUp.pressing() && vexRT.ButtonDown.pressing()
-        && vexRT.ButtonLeft.pressing() && vexRT.ButtonRight.pressing()) {
-        autonomous();
-    }   
-	
     vex::this_thread::sleep_for(20);
     
     //Sleep the task for a short amount of time to prevent wasted resources. 
@@ -476,16 +508,3 @@ int main() {
     }    
        
 }
-
-
-
-
-        
-                            
-     
-                
-
-
-
-
-
